@@ -119,7 +119,7 @@ class AuthIntegration extends AbstractIntegration
                 UrlGeneratorInterface::ABSOLUTE_URL
             );
 
-            $url = preg_replace('/http:\/\/|\/s\/dashboard/i', '', $url);
+            $url = preg_replace('/http[s]?:\/\/|\/s\/dashboard/i', '', $url);
 
             return [
                 'template'   => 'MauticAuthBundle:Integration:form.html.php',
