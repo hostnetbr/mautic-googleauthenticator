@@ -28,12 +28,14 @@ class AuthController extends CommonController
             $secret = $myIntegration->getGauthSecret();
 
             $code = $request->request->get('_code');
-            
+
             $ga = new AuthenticatorHelper();
 
             if ($ga->checkCode($secret, $code)) {
                 $this->get('session')->set('gauth_granted', true);
                 return new RedirectResponse('dashboard');
+            } else {
+                $this->addFlash('Invalid code. Please try again.', [], 'error', null, false);
             }
         }
 
