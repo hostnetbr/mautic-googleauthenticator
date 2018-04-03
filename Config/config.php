@@ -3,7 +3,7 @@
 return [
     'name'        => 'Google Authenticator',
     'description' => 'Two-Factor authentication for Mautic.',
-    'version'     => '1.0',
+    'version'     => '1.1.5',
     'author'      => 'Henrique Rodrigues',
     'routes'      => [
         'main' => [

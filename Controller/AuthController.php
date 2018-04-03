@@ -10,6 +10,7 @@
 namespace MauticPlugin\MauticAuthBundle\Controller;
 
 use MauticPlugin\MauticAuthBundle\Helper\AuthenticatorHelper;
+use MauticPlugin\MauticAuthBundle\Entity\AuthBrowser;
 
 use Mautic\CoreBundle\Controller\CommonController;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,7 +33,24 @@ class AuthController extends CommonController
             $ga = new AuthenticatorHelper();
 
             if ($ga->checkCode($secret, $code)) {
+
+                $trustBrowser = !!$request->request->get('trust_browser');
+
+                if ($trustBrowser) {
+                    $entityManager = $this->getDoctrine()->getManager();
+
+                    $browser = new AuthBrowser();
+                    $browser->setUserId(1);
+                    $browser->setHash($request->request->get('hash'));
+                    $browser->setDateAdded(date('Y-m-d H:i:s'));
+
+                    $entityManager->persist($browser);
+
+                    $entityManager->flush();
+                }
+
                 $this->get('session')->set('gauth_granted', true);
+
                 return new RedirectResponse('dashboard');
             } else {
                 $this->addFlash('Invalid code. Please try again.', [], 'error', null, false);
