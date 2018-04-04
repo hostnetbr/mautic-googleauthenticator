@@ -58,7 +58,7 @@ class AuthController extends CommonController
 
                 return $response;
             } else {
-               $this->addFlash('Invalid code. Please try again.', [], 'error', null, false);
+                $this->addFlash('Invalid code. Please try again.', [], 'error', null, false);
             }
         }
 
