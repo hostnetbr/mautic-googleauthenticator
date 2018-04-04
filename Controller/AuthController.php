@@ -13,8 +13,11 @@ use MauticPlugin\MauticAuthBundle\Helper\AuthenticatorHelper;
 use MauticPlugin\MauticAuthBundle\Entity\AuthBrowser;
 
 use Mautic\CoreBundle\Controller\CommonController;
+
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Cookie;
+
 
 use Mautic\PluginBundle\Helper\IntegrationHelper;
 
@@ -32,8 +35,7 @@ class AuthController extends CommonController
 
             $ga = new AuthenticatorHelper();
 
-            if ($ga->checkCode($secret, $code)) {
-
+            //if ($ga->checkCode($secret, $code)) {
                 $trustBrowser = !!$request->request->get('trust_browser');
 
                 if ($trustBrowser) {
@@ -51,10 +53,13 @@ class AuthController extends CommonController
 
                 $this->get('session')->set('gauth_granted', true);
 
-                return new RedirectResponse('dashboard');
-            } else {
-                $this->addFlash('Invalid code. Please try again.', [], 'error', null, false);
-            }
+                $response =  new RedirectResponse('dashboard');
+                $response->headers->setCookie(new Cookie('plugin_browser_hash', $request->request->get('hash')));
+
+                return $response;
+            //} else {
+               // $this->addFlash('Invalid code. Please try again.', [], 'error', null, false);
+            //}
         }
 
         return $this->delegateView([

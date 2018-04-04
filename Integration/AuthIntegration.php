@@ -20,7 +20,6 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class AuthIntegration extends AbstractIntegration
 {
-
     protected $user;
 
     protected $status_field;

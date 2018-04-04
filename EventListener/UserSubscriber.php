@@ -9,6 +9,7 @@ use Symfony\Component\Routing\RouterInterface;
 use Mautic\CoreBundle\Security\Permissions\CorePermissions;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Mautic\PluginBundle\Helper\IntegrationHelper;
+use MauticPlugin\MauticAuthbundle\Entity\AuthBrowserRepository;
 
 /**
  * Class UserSubscriber
@@ -68,7 +69,9 @@ class UserSubscriber extends CommonSubscriber
                     $request    = $event->getRequest();
                     $requestUri = $request->getRequestUri();
 
-                    $gauthGranted = $request->getSession()->get('gauth_granted');
+                    $gauthGranted = $this->isSafeBrowser($request->cookies)
+                        ? true
+                        : $request->getSession()->get('gauth_granted');
 
                     $needVerification = (!$this->security->isAnonymous()) // User logged in
                         && !preg_match('/gauth|login/i', $requestUri) // it's not an authentication url
@@ -83,6 +86,22 @@ class UserSubscriber extends CommonSubscriber
                 }
             }
         }
+    }
+
+    public function isSafeBrowser($cookies)
+    {
+        if (!$cookies->has('plugin_browser_hash')) {
+            return false;
+        }
+
+        $hash = $cookies->get('plugin_browser_hash');
+
+        $browsers = $this->em->getRepository('MauticAuthBundle:AuthBrowser')->findBy([
+            'user_id' => 1,
+            'hash' => $hash
+        ]);
+
+        return !empty($browsers);
     }
 
     public function kill()
