@@ -37,6 +37,7 @@ class AuthIntegration extends AbstractIntegration
 
         $this->status_field = "scanned_$id";
         $this->secret_field = "secret_$id";
+        $this->cookie_field = "cookie_$id";
         $this->gauth = new AuthenticatorHelper();
     }
 
@@ -89,6 +90,18 @@ class AuthIntegration extends AbstractIntegration
                         'data'  => $this->isConfigured(),
                         'attr'  => [
                             'tooltip' => 'You must scan the code with your phone to use the plugin.',
+                        ],
+                    ]
+                )
+                ->add(
+                    $this->cookie_field,
+                    'text',
+                    [
+                        'label' => 'How many days you wish to maintain trusted browsers?',
+                        'data'  => $this->getCookieDuration(),
+                        'attr'  => [
+                            'tooltip' => 'You won\'t be prompted for codes in trusted browsers',
+                            'class' => 'form-control'
                         ],
                     ]
                 )
@@ -154,5 +167,14 @@ class AuthIntegration extends AbstractIntegration
         return isset($featureSettings[$this->status_field])
             ? (bool) $featureSettings[$this->status_field]
             : false;
+    }
+
+    public function getCookieDuration()
+    {
+        $featureSettings = $this->getKeys();
+
+        return isset($featureSettings[$this->cookie_field])
+            ? $featureSettings[$this->cookie_field]
+            : 30;
     }
 }

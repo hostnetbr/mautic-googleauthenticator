@@ -73,7 +73,11 @@ class UserSubscriber extends CommonSubscriber
                     $requestUri = $request->getRequestUri();
                     $userId = $this->user->getUser()->getId();
 
-                    $gauthGranted = $this->isSafeBrowser($request->cookies, $userId)
+                    $gauthGranted = $this->isSafeBrowser(
+                        $request->cookies,
+                        $userId,
+                        $myIntegration->getCookieDuration()
+                    )
                         ? true
                         : $request->getSession()->get('gauth_granted');
 
@@ -92,7 +96,7 @@ class UserSubscriber extends CommonSubscriber
         }
     }
 
-    public function isSafeBrowser($cookies, $userId)
+    public function isSafeBrowser($cookies, $userId, $cookieDuration)
     {
         if (!$cookies->has('plugin_browser_hash')) {
             return false;
@@ -105,7 +109,22 @@ class UserSubscriber extends CommonSubscriber
             'hash' => $hash
         ]);
 
-        return !empty($browsers);
+        if (empty($browsers)) {
+            return false;
+        }
+
+        $currentBrowser = current($browsers);
+
+        $currentDate = new \DateTime();
+        $currentDate->setTimezone(new \DateTimeZone('UTC'));
+
+        $cookieAge = $currentDate->diff($currentBrowser->getDateAdded())->format('%d');
+
+        if ($cookieAge > $cookieDuration) {
+            return false;
+        }
+
+        return true;
     }
 
     public function kill()
