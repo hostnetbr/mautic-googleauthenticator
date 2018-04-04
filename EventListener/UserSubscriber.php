@@ -10,6 +10,7 @@ use Mautic\CoreBundle\Security\Permissions\CorePermissions;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Mautic\PluginBundle\Helper\IntegrationHelper;
 use MauticPlugin\MauticAuthbundle\Entity\AuthBrowserRepository;
+use Mautic\CoreBundle\Helper\UserHelper;
 
 /**
  * Class UserSubscriber
@@ -34,11 +35,13 @@ class UserSubscriber extends CommonSubscriber
     public function __construct(
         RouterInterface $router,
         CorePermissions $security,
-        IntegrationHelper $integration
+        IntegrationHelper $integration,
+        UserHelper $user
     ) {
         $this->router = $router;
         $this->security = $security;
         $this->integration = $integration;
+        $this->user = $user;
     }
 
     /**orm
@@ -68,8 +71,9 @@ class UserSubscriber extends CommonSubscriber
                 if ($published && $myIntegration->isConfigured()) {
                     $request    = $event->getRequest();
                     $requestUri = $request->getRequestUri();
+                    $userId = $this->user->getUser()->getId();
 
-                    $gauthGranted = $this->isSafeBrowser($request->cookies)
+                    $gauthGranted = $this->isSafeBrowser($request->cookies, $userId)
                         ? true
                         : $request->getSession()->get('gauth_granted');
 
@@ -88,7 +92,7 @@ class UserSubscriber extends CommonSubscriber
         }
     }
 
-    public function isSafeBrowser($cookies)
+    public function isSafeBrowser($cookies, $userId)
     {
         if (!$cookies->has('plugin_browser_hash')) {
             return false;
@@ -97,7 +101,7 @@ class UserSubscriber extends CommonSubscriber
         $hash = $cookies->get('plugin_browser_hash');
 
         $browsers = $this->em->getRepository('MauticAuthBundle:AuthBrowser')->findBy([
-            'user_id' => 1,
+            'user_id' => $userId,
             'hash' => $hash
         ]);
 

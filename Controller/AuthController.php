@@ -35,14 +35,14 @@ class AuthController extends CommonController
 
             $ga = new AuthenticatorHelper();
 
-            //if ($ga->checkCode($secret, $code)) {
+            if ($ga->checkCode($secret, $code)) {
                 $trustBrowser = !!$request->request->get('trust_browser');
 
                 if ($trustBrowser) {
                     $entityManager = $this->getDoctrine()->getManager();
 
                     $browser = new AuthBrowser();
-                    $browser->setUserId(1);
+                    $browser->setUserId($this->get('mautic.helper.user')->getUser()->getId());
                     $browser->setHash($request->request->get('hash'));
                     $browser->setDateAdded(date('Y-m-d H:i:s'));
 
@@ -57,9 +57,9 @@ class AuthController extends CommonController
                 $response->headers->setCookie(new Cookie('plugin_browser_hash', $request->request->get('hash')));
 
                 return $response;
-            //} else {
-               // $this->addFlash('Invalid code. Please try again.', [], 'error', null, false);
-            //}
+            } else {
+               $this->addFlash('Invalid code. Please try again.', [], 'error', null, false);
+            }
         }
 
         return $this->delegateView([

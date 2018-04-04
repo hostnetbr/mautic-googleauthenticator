@@ -20,7 +20,8 @@ return [
                 'arguments' => [
                     'router',
                     'mautic.security',
-                    'mautic.helper.integration'
+                    'mautic.helper.integration',
+                    'mautic.helper.user'
                 ]
             ]
         ],
