@@ -97,7 +97,7 @@ class AuthIntegration extends AbstractIntegration
                     $this->cookie_field,
                     'text',
                     [
-                        'label' => 'How many days you wish to maintain trusted browsers?',
+                        'label' => 'How many days do you wish to maintain trusted browsers?',
                         'data'  => $this->getCookieDuration(),
                         'attr'  => [
                             'tooltip' => 'You won\'t be prompted for codes in trusted browsers',
