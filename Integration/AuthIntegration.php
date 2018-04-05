@@ -86,7 +86,7 @@ class AuthIntegration extends AbstractIntegration
                     $this->status_field,
                     'yesno_button_group',
                     [
-                        'label' => 'Have you scanned the QR Code?',
+                        'label' => 'mautic.integration.auth.scanned',
                         'data'  => $this->isConfigured(),
                         'attr'  => [
                             'tooltip' => 'You must scan the code with your phone to use the plugin.',
@@ -97,7 +97,7 @@ class AuthIntegration extends AbstractIntegration
                     $this->cookie_field,
                     'text',
                     [
-                        'label' => 'How many days do you wish to maintain trusted browsers?',
+                        'label' => 'mautic.integration.auth.cookie_duration',
                         'data'  => $this->getCookieDuration(),
                         'attr'  => [
                             'tooltip' => 'You won\'t be prompted for codes in trusted browsers',
