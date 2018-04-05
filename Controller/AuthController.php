@@ -54,7 +54,13 @@ class AuthController extends CommonController
                 $this->get('session')->set('gauth_granted', true);
 
                 $response =  new RedirectResponse('dashboard');
-                $response->headers->setCookie(new Cookie('plugin_browser_hash', $request->request->get('hash')));
+                $response->headers->setCookie(
+                    new Cookie(
+                        'plugin_browser_hash',
+                        $request->request->get('hash'),
+                        (new \DateTime())->add(new \DateInterval("P{$myIntegration->getCookieDuration()}D"))
+                    )
+                );
 
                 return $response;
             } else {
