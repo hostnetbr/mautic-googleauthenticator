@@ -16,7 +16,7 @@ return [
     'services' => [
         'events' => [
             'mautic.auth.subscriber.user_bundle' => [
-                'class'     => 'MauticPlugin\HostnetAuthBundle\EventListener\UserSubscriber',
+                'class'     => MauticPlugin\HostnetAuthBundle\EventListener\UserSubscriber::class,
                 'arguments' => [
                     'router',
                     'mautic.security',
