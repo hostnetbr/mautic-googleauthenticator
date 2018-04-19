@@ -7,7 +7,7 @@ return [
     'author'      => 'Henrique Rodrigues',
     'routes'      => [
         'main' => [
-            'mautic_gauth_test' => [
+            'hostnet_google_authenticator' => [
                 'path'       => '/gauth',
                 'controller' => 'HostnetAuthBundle:Auth:auth',
             ]
