@@ -1,6 +1,6 @@
 <?php
 
-namespace MauticPlugin\MauticAuthbundle\Entity;
+namespace MauticPlugin\HostnetAuthBundle\Entity;
 
 use Mautic\CoreBundle\Entity\CommonRepository;
 

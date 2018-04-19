@@ -9,14 +9,14 @@ return [
         'main' => [
             'mautic_gauth_test' => [
                 'path'       => '/gauth',
-                'controller' => 'MauticAuthBundle:Auth:auth',
+                'controller' => 'HostnetAuthBundle:Auth:auth',
             ]
         ]
     ],
     'services' => [
         'events' => [
             'mautic.auth.subscriber.user_bundle' => [
-                'class'     => 'MauticPlugin\MauticAuthBundle\EventListener\UserSubscriber',
+                'class'     => 'MauticPlugin\HostnetAuthBundle\EventListener\UserSubscriber',
                 'arguments' => [
                     'router',
                     'mautic.security',
@@ -27,7 +27,7 @@ return [
         ],
         'integrations' => [
             'mautic.integration.auth' => [
-                'class'     => \MauticPlugin\MauticAuthBundle\Integration\AuthIntegration::class,
+                'class'     => \MauticPlugin\HostnetAuthBundle\Integration\AuthIntegration::class,
                 'arguments' => [
                     'mautic.helper.user'
                 ],

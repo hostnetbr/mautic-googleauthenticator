@@ -7,10 +7,10 @@
  *
  */
 
-namespace MauticPlugin\MauticAuthBundle\Controller;
+namespace MauticPlugin\HostnetAuthBundle\Controller;
 
-use MauticPlugin\MauticAuthBundle\Helper\AuthenticatorHelper;
-use MauticPlugin\MauticAuthBundle\Entity\AuthBrowser;
+use MauticPlugin\HostnetAuthBundle\Helper\AuthenticatorHelper;
+use MauticPlugin\HostnetAuthBundle\Entity\AuthBrowser;
 
 use Mautic\CoreBundle\Controller\CommonController;
 
@@ -69,7 +69,7 @@ class AuthController extends CommonController
         }
 
         return $this->delegateView([
-            'contentTemplate' => 'MauticAuthBundle:AuthView:form.html.php',
+            'contentTemplate' => 'HostnetAuthBundle:AuthView:form.html.php',
             'viewParameters' => [
 
             ]

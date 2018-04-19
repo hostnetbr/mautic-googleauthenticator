@@ -25,9 +25,9 @@ declare(strict_types=1);
  * limitations under the License.
  */
 
-namespace MauticPlugin\MauticAuthBundle\Helper;
+namespace MauticPlugin\HostnetAuthBundle\Helper;
 
-use MauticPlugin\MauticAuthBundle\Helper\QrHelper as QrHelper;
+use MauticPlugin\HostnetAuthBundle\Helper\QrHelper as QrHelper;
 
 /**
  * @see https://github.com/google/google-authenticator/wiki/Key-Uri-Format

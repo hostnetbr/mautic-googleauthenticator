@@ -1,6 +1,6 @@
 <?php
 
-namespace MauticPlugin\MauticAuthBundle\Entity;
+namespace MauticPlugin\HostnetAuthBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Mautic\CategoryBundle\Entity\Category;
@@ -40,7 +40,7 @@ class AuthBrowser extends CommonEntity
         $builder = new ClassMetadataBuilder($metadata);
 
         $builder->setTable('plugin_auth_browsers')
-            ->setCustomRepositoryClass('MauticPlugin\MauticAuthBundle\Entity\AuthBrowserRepository');
+            ->setCustomRepositoryClass('MauticPlugin\HostnetAuthBundle\Entity\AuthBrowserRepository');
 
         $builder->addIdColumns('user_id', 'hash');
         $builder->addField('date_added', 'datetime');

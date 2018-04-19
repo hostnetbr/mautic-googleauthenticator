@@ -1,6 +1,6 @@
 <?php
 
-namespace MauticPlugin\MauticAuthBundle\EventListener;
+namespace MauticPlugin\HostnetAuthBundle\EventListener;
 
 use Mautic\CoreBundle\EventListener\CommonSubscriber;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
@@ -9,7 +9,7 @@ use Symfony\Component\Routing\RouterInterface;
 use Mautic\CoreBundle\Security\Permissions\CorePermissions;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Mautic\PluginBundle\Helper\IntegrationHelper;
-use MauticPlugin\MauticAuthbundle\Entity\AuthBrowserRepository;
+use MauticPlugin\HostnetAuthBundle\Entity\AuthBrowserRepository;
 use Mautic\CoreBundle\Helper\UserHelper;
 
 /**
@@ -104,7 +104,7 @@ class UserSubscriber extends CommonSubscriber
 
         $hash = $cookies->get('plugin_browser_hash');
 
-        $browsers = $this->em->getRepository('MauticAuthBundle:AuthBrowser')->findBy([
+        $browsers = $this->em->getRepository('HostnetAuthBundle:AuthBrowser')->findBy([
             'user_id' => $userId,
             'hash' => $hash
         ]);

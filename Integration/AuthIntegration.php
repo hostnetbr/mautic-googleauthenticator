@@ -6,15 +6,15 @@
  *
  */
 
-namespace MauticPlugin\MauticAuthBundle\Integration;
+namespace MauticPlugin\HostnetAuthBundle\Integration;
 
 use Mautic\PluginBundle\Integration\AbstractIntegration;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormBuilder;
 use Mautic\CoreBundle\Helper\UserHelper;
 
-use MauticPlugin\MauticAuthBundle\Helper\NotationHelper;
-use MauticPlugin\MauticAuthBundle\Helper\AuthenticatorHelper;
+use MauticPlugin\HostnetAuthBundle\Helper\NotationHelper;
+use MauticPlugin\HostnetAuthBundle\Helper\AuthenticatorHelper;
 
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -134,7 +134,7 @@ class AuthIntegration extends AbstractIntegration
             $url = preg_replace('/http[s]?:\/\/|\/s\/dashboard/i', '', $url);
 
             return [
-                'template'   => 'MauticAuthBundle:Integration:form.html.php',
+                'template'   => 'HostnetAuthBundle:Integration:form.html.php',
                 'parameters' => [
                     'secret' => $this->secret,
                     'qrUrl' => $this->gauth->getURL(

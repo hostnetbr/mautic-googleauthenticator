@@ -1,13 +1,13 @@
 <?php
 
-namespace MauticPlugin\MauticAuthBundle;
+namespace MauticPlugin\HostnetAuthBundle;
 
 use Doctrine\DBAL\Schema\Schema;
 use Mautic\PluginBundle\Bundle\PluginBundleBase;
 use Mautic\PluginBundle\Entity\Plugin;
 use Mautic\CoreBundle\Factory\MauticFactory;
 
-class MauticAuthBundle extends PluginBundleBase
+class HostnetAuthBundle extends PluginBundleBase
 {
     public static function onPluginInstall(
         Plugin $plugin,
