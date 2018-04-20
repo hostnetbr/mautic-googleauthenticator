@@ -3,7 +3,7 @@
 return [
     'name'        => 'Google Authenticator',
     'description' => 'Two-Factor authentication for Mautic.',
-    'version'     => '1.3.2',
+    'version'     => '1.3.3',
     'author'      => 'Henrique Rodrigues',
     'routes'      => [
         'main' => [
@@ -26,8 +26,8 @@ return [
             ]
         ],
         'integrations' => [
-            'mautic.integration.auth' => [
-                'class'     => \MauticPlugin\HostnetAuthBundle\Integration\AuthIntegration::class,
+            'mautic.integration.hostnetauth' => [
+                'class'     => MauticPlugin\HostnetAuthBundle\Integration\HostnetAuthIntegration::class,
                 'arguments' => [
                     'mautic.helper.user'
                 ],
