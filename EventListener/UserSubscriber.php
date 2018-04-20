@@ -63,7 +63,7 @@ class UserSubscriber extends CommonSubscriber
     public function onKernelRequest(GetResponseEvent $event)
     {
         if ($event->isMasterRequest()) {
-            $myIntegration = $this->integration->getIntegrationObject('Auth');
+            $myIntegration = $this->integration->getIntegrationObject('HostnetAuth');
 
             if ($myIntegration) {
                 $published = $myIntegration->getIntegrationSettings()->getIsPublished();
@@ -88,7 +88,7 @@ class UserSubscriber extends CommonSubscriber
 
                     if ($needVerification) {
                         $request->getSession()->set('gauth_granted', false);
-                        $generateUrl = $this->router->generate('mautic_gauth_test');
+                        $generateUrl = $this->router->generate('hostnet_google_authenticator');
                         $event->setResponse(new RedirectResponse($generateUrl));
                     }
                 }

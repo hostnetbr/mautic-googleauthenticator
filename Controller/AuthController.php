@@ -27,7 +27,7 @@ class AuthController extends CommonController
     {
         if ($this->isCsrfTokenValid('gauth', $request->request->get('_csrf_token'))) {
             $integrationHelper = $this->get('mautic.helper.integration');
-            $myIntegration = $integrationHelper->getIntegrationObject('Auth');
+            $myIntegration = $integrationHelper->getIntegrationObject('HostnetAuth');
 
             $secret = $myIntegration->getGauthSecret();
 
