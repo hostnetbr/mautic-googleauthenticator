@@ -3,8 +3,8 @@
 return [
     'name'        => 'Google Authenticator',
     'description' => 'Two-Factor authentication for Mautic.',
-    'version'     => '1.3.3',
-    'author'      => 'Henrique Rodrigues',
+    'version'     => '2.0.0',
+    'author'      => 'Henrique Rodrigues <henrique@hostnet.com.br>',
     'routes'      => [
         'main' => [
             'hostnet_google_authenticator' => [
