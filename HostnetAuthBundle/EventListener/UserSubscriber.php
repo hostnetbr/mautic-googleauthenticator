@@ -62,37 +62,44 @@ class UserSubscriber extends CommonSubscriber
      */
     public function onKernelRequest(GetResponseEvent $event)
     {
-        if ($event->isMasterRequest()) {
-            $myIntegration = $this->integration->getIntegrationObject('HostnetAuth');
+        if (!$event->isMasterRequest()) {
+            return false;
+        }
 
-            if ($myIntegration) {
-                $published = $myIntegration->getIntegrationSettings()->getIsPublished();
+        $myIntegration = $this->integration->getIntegrationObject('HostnetAuth');
 
-                if ($published && $myIntegration->isConfigured()) {
-                    $request    = $event->getRequest();
-                    $requestUri = $request->getRequestUri();
-                    $userId = $this->user->getUser()->getId();
+        if (!$myIntegration) {
+            return false;
+        }
 
-                    $gauthGranted = $this->isSafeBrowser(
-                        $request->cookies,
-                        $userId,
-                        $myIntegration->getCookieDuration()
-                    )
-                        ? true
-                        : $request->getSession()->get('gauth_granted');
 
-                    $needVerification = (!$this->security->isAnonymous()) // User logged in
-                        && !preg_match('/gauth|login/i', $requestUri) // it's not an authentication url
-                        && !$gauthGranted // user not authenticated
-                    ;
+        $published = $myIntegration->getIntegrationSettings()->getIsPublished();
 
-                    if ($needVerification) {
-                        $request->getSession()->set('gauth_granted', false);
-                        $generateUrl = $this->router->generate('hostnet_google_authenticator');
-                        $event->setResponse(new RedirectResponse($generateUrl));
-                    }
-                }
-            }
+        if (!$published || !$myIntegration->isConfigured()) {
+            return false;
+        }
+
+        $request    = $event->getRequest();
+        $requestUri = $request->getRequestUri();
+        $userId = $this->user->getUser()->getId();
+
+        $gauthGranted = $this->isSafeBrowser(
+            $request->cookies,
+            $userId,
+            $myIntegration->getCookieDuration()
+        )
+            ? true
+            : $request->getSession()->get('gauth_granted');
+
+        $needVerification = (!$this->security->isAnonymous()) // User logged in
+            && !preg_match('/gauth|login|HostnetAuth/i', $requestUri) // it's not an authentication url
+            && !$gauthGranted // user not authenticated
+        ;
+
+        if ($needVerification) {
+            $request->getSession()->set('gauth_granted', false);
+            $generateUrl = $this->router->generate('hostnet_google_authenticator');
+            $event->setResponse(new RedirectResponse($generateUrl));
         }
     }
 
