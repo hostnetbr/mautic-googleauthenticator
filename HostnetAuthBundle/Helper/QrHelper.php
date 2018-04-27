@@ -91,4 +91,4 @@ final class QrHelper
 }
 
 // NEXT_MAJOR: Remove class alias
-class_alias('Sonata\GoogleAuthenticator\QrHelper', 'Google\Authenticator\QrHelper', false);
+@class_alias('Sonata\GoogleAuthenticator\QrHelper', 'Google\Authenticator\QrHelper', false);
