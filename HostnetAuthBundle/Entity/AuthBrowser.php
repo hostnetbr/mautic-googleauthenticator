@@ -18,17 +18,17 @@ class AuthBrowser extends CommonEntity
     private $id;
 
     /**
-     * @var Category
+     * @var int
      */
     private $user_id;
 
     /**
-     * @var Category
+     * @var string
      */
     private $hash;
 
     /**
-     * @var Category
+     * @var DateTime
      */
     private $date_added;
 
@@ -163,7 +163,7 @@ class AuthBrowser extends CommonEntity
     }
 
     /**
-     * @param datetime
+     * @param DateTime
      *
      * @return AuthBrowser
      */
