@@ -92,7 +92,7 @@ class UserSubscriber extends CommonSubscriber
             : $request->getSession()->get('gauth_granted');
 
         $needVerification = (!$this->security->isAnonymous()) // User logged in
-            && !preg_match('/gauth|login|HostnetAuth/i', $requestUri) // it's not an authentication url
+            && !preg_match('/gauth|login|HostnetAuth|api/i', $requestUri) // it's not an authentication url
             && !$gauthGranted // user not authenticated
         ;
 
