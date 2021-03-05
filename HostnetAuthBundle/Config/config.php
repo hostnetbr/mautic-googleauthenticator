@@ -3,8 +3,8 @@
 return [
     'name'        => 'Google Authenticator',
     'description' => 'Two-Factor authentication for Mautic.',
-    'version'     => '2.1.0',
-    'author'      => 'Henrique Rodrigues <henrique@hostnet.com.br>',
+    'version'     => '3.0.0',
+    'author'      => 'Hostnet Internet',
     'routes'      => [
         'main' => [
             'hostnet_google_authenticator' => [
@@ -21,7 +21,8 @@ return [
                     'router',
                     'mautic.security',
                     'mautic.helper.integration',
-                    'mautic.helper.user'
+                    'mautic.helper.user',
+                    'doctrine.orm.entity_manager'
                 ]
             ]
         ],
@@ -29,7 +30,23 @@ return [
             'mautic.integration.hostnetauth' => [
                 'class'     => MauticPlugin\HostnetAuthBundle\Integration\HostnetAuthIntegration::class,
                 'arguments' => [
-                    'mautic.helper.user'
+                    'event_dispatcher',
+                    'mautic.helper.cache_storage',
+                    'doctrine.orm.entity_manager',
+                    'session',
+                    'request_stack',
+                    'router',
+                    'translator',
+                    'logger',
+                    'mautic.helper.encryption',
+                    'mautic.lead.model.lead',
+                    'mautic.lead.model.company',
+                    'mautic.helper.paths',
+                    'mautic.core.model.notification',
+                    'mautic.lead.model.field',
+                    'mautic.plugin.model.integration_entity',
+                    'mautic.lead.model.dnc',
+                    'mautic.helper.user',
                 ],
             ]
         ]

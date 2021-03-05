@@ -291,6 +291,3 @@ final class NotationHelper
         return $rawString;
     }
 }
-
-// NEXT_MAJOR: Remove class alias
-@class_alias('Sonata\GoogleAuthenticator\NotationHelper', 'Google\Authenticator\NotationHelper', false);

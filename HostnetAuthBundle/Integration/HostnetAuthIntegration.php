@@ -8,10 +8,31 @@
 
 namespace MauticPlugin\HostnetAuthBundle\Integration;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Mautic\CoreBundle\Helper\CacheStorageHelper;
+use Doctrine\ORM\EntityManager;
+use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Routing\Router;
+use Symfony\Component\Translation\TranslatorInterface;
+use Monolog\Logger;
+use Mautic\CoreBundle\Helper\EncryptionHelper;
+use Mautic\LeadBundle\Model\LeadModel;
+use Mautic\LeadBundle\Model\CompanyModel;
+use Mautic\CoreBundle\Helper\PathsHelper;
+use Mautic\CoreBundle\Model\NotificationModel;
+use Mautic\LeadBundle\Model\FieldModel;
+use Mautic\PluginBundle\Model\IntegrationEntityModel;
+use Mautic\LeadBundle\Model\DoNotContact as DoNotContactModel;
+use Mautic\CoreBundle\Helper\UserHelper;
 use Mautic\PluginBundle\Integration\AbstractIntegration;
+
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormBuilder;
-use Mautic\CoreBundle\Helper\UserHelper;
+use Mautic\CoreBundle\Form\Type\YesNoButtonGroupType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+
 
 use MauticPlugin\HostnetAuthBundle\Helper\NotationHelper;
 use MauticPlugin\HostnetAuthBundle\Helper\AuthenticatorHelper;
@@ -29,16 +50,53 @@ class HostnetAuthIntegration extends AbstractIntegration
     protected $gauth;
     protected $secret;
 
-    public function __construct(UserHelper $user)
-    {
+    public function __construct(
+        EventDispatcherInterface $eventDispatcher,
+        CacheStorageHelper $cacheStorageHelper,
+        EntityManager $entityManager,
+        Session $session,
+        RequestStack $requestStack,
+        Router $router,
+        TranslatorInterface $translator,
+        Logger $logger,
+        EncryptionHelper $encryptionHelper,
+        LeadModel $leadModel,
+        CompanyModel $companyModel,
+        PathsHelper $pathsHelper,
+        NotificationModel $notificationModel,
+        FieldModel $fieldModel,
+        IntegrationEntityModel $integrationEntityModel,
+        DoNotContactModel $doNotContact,
+        UserHelper $user
+    ) {
+
+        parent::__construct(
+            $eventDispatcher,
+            $cacheStorageHelper,
+            $entityManager,
+            $session,
+            $requestStack,
+            $router,
+            $translator,
+            $logger,
+            $encryptionHelper,
+            $leadModel,
+            $companyModel,
+            $pathsHelper,
+            $notificationModel,
+            $fieldModel,
+            $integrationEntityModel,
+            $doNotContact
+        );
 
         $this->user = $user->getUser();
 
-        $id = $this->user->getID();
-
+        $id = $this->user->getId();
+        
         $this->status_field = "scanned_$id";
         $this->secret_field = "secret_$id";
         $this->cookie_field = "cookie_$id";
+
         $this->gauth = new AuthenticatorHelper();
     }
 
@@ -63,14 +121,12 @@ class HostnetAuthIntegration extends AbstractIntegration
     }
 
     /**
-     * Return array of key => label elements that will be converted to inputs to
-     * obtain from the user.
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getRequiredKeyFields()
     {
         return [
+            $this->cookie_field     => 'mautic.integration.auth.cookie_duration',
         ];
     }
 
@@ -81,11 +137,11 @@ class HostnetAuthIntegration extends AbstractIntegration
      */
     public function appendToForm(&$builder, $data, $formArea)
     {
-        if ($formArea === 'keys') {
+        if ('keys' === $formArea) {           
             $builder
                 ->add(
                     $this->status_field,
-                    'yesno_button_group',
+                    YesNoButtonGroupType::class,
                     [
                         'label' => 'mautic.integration.auth.scanned',
                         'data'  => $this->isConfigured(),
@@ -96,7 +152,7 @@ class HostnetAuthIntegration extends AbstractIntegration
                 )
                 ->add(
                     $this->cookie_field,
-                    'text',
+                    NumberType::class,
                     [
                         'label' => 'mautic.integration.auth.cookie_duration',
                         'data'  => $this->getCookieDuration(),
@@ -108,12 +164,12 @@ class HostnetAuthIntegration extends AbstractIntegration
                 )
                 ->add(
                     $this->secret_field,
-                    'hidden',
+                    HiddenType::class,
                     [
                         'data'  => $this->getGauthSecret()
                     ]
                 );
-        }
+       }
     }
 
     /**
@@ -138,7 +194,7 @@ class HostnetAuthIntegration extends AbstractIntegration
                 'template'   => 'HostnetAuthBundle:Integration:form.html.php',
                 'parameters' => [
                     'secret' => $this->secret,
-                    'qrUrl' => $this->gauth->getURL(
+                    'qrUrl' => $this->gauth->getURL(  
                         $this->user->getUsername(),
                         $url,
                         $this->secret

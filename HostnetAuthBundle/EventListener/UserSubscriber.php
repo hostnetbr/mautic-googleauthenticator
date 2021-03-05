@@ -2,14 +2,14 @@
 
 namespace MauticPlugin\HostnetAuthBundle\EventListener;
 
-use Mautic\CoreBundle\EventListener\CommonSubscriber;
+use Doctrine\ORM\EntityManager;
+use Mautic\CoreBundle\Security\Permissions\CorePermissions;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Routing\RouterInterface;
-use Mautic\CoreBundle\Security\Permissions\CorePermissions;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Mautic\PluginBundle\Helper\IntegrationHelper;
-use MauticPlugin\HostnetAuthBundle\Entity\AuthBrowserRepository;
 use Mautic\CoreBundle\Helper\UserHelper;
 
 /**
@@ -20,7 +20,7 @@ use Mautic\CoreBundle\Helper\UserHelper;
  * @link https://www.hostnet.com.br
  *
  */
-class UserSubscriber extends CommonSubscriber
+class UserSubscriber implements EventSubscriberInterface
 {
     protected $router;
     protected $security;
@@ -36,12 +36,14 @@ class UserSubscriber extends CommonSubscriber
         RouterInterface $router,
         CorePermissions $security,
         IntegrationHelper $integration,
-        UserHelper $user
+        UserHelper $user,
+        EntityManager $em
     ) {
         $this->router = $router;
         $this->security = $security;
         $this->integration = $integration;
         $this->user = $user;
+        $this->em = $em;
     }
 
     /**orm
@@ -62,6 +64,7 @@ class UserSubscriber extends CommonSubscriber
      */
     public function onKernelRequest(GetResponseEvent $event)
     {
+        
         if (!$event->isMasterRequest()) {
             return false;
         }
@@ -71,22 +74,23 @@ class UserSubscriber extends CommonSubscriber
         if (!$myIntegration) {
             return false;
         }
-
+        
 
         $published = $myIntegration->getIntegrationSettings()->getIsPublished();
 
         if (!$published || !$myIntegration->isConfigured()) {
             return false;
         }
-
+        
         $request    = $event->getRequest();
         $requestUri = $request->getRequestUri();
         $userId = $this->user->getUser()->getId();
-
+        
         $gauthGranted = $this->isSafeBrowser(
             $request->cookies,
             $userId,
-            $myIntegration->getCookieDuration()
+            $myIntegration->getCookieDuration(),
+            $myIntegration
         )
             ? true
             : $request->getSession()->get('gauth_granted');
@@ -103,19 +107,19 @@ class UserSubscriber extends CommonSubscriber
         }
     }
 
-    public function isSafeBrowser($cookies, $userId, $cookieDuration)
+    public function isSafeBrowser($cookies, $userId, $cookieDuration, $myIntegration)
     {
         if (!$cookies->has('plugin_browser_hash')) {
             return false;
         }
-
+        
         $hash = $cookies->get('plugin_browser_hash');
 
         $browsers = $this->em->getRepository('HostnetAuthBundle:AuthBrowser')->findBy([
             'user_id' => $userId,
             'hash' => $hash
         ]);
-
+        
         if (empty($browsers)) {
             return false;
         }
@@ -132,12 +136,5 @@ class UserSubscriber extends CommonSubscriber
         }
 
         return true;
-    }
-
-    public function kill()
-    {
-        echo "<pre>";
-        print_r(func_get_args());
-        exit;
     }
 }

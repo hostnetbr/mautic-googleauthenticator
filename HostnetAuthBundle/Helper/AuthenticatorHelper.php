@@ -185,6 +185,3 @@ final class AuthenticatorHelper
         return unpack('N', substr(substr($bytes, $start), 0, 4))[1];
     }
 }
-
-// NEXT_MAJOR: Remove class alias
-@class_alias('Sonata\AuthenticatorHelper\AuthenticatorHelper', 'Google\Authenticator\AuthenticatorHelper', false);
