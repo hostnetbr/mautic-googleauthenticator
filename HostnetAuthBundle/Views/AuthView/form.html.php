@@ -29,5 +29,12 @@ $view['slots']->set(
     <button class="btn btn-lg btn-primary btn-block" type="submit"><?=$view['translator']->trans('mautic.plugin.auth.submit');?></button>
 </form>
 
-<script src="<?= $view['assets']->getUrl('plugins/HostnetAuthBundle/Assets/js/afingerprint2.min.js'); ?>"></script>
-<script src="<?= $view['assets']->getUrl('plugins/HostnetAuthBundle/Assets/js/gauth.js'); ?>?t=<?=time()?>"></script>
+<script src="<?= $view['assets']->getUrl('plugins/HostnetAuthBundle/Assets/js/fingerprint2.min.js'); ?>"></script>
+<script>
+    /* global Fingerprint2 */
+    document.addEventListener("DOMContentLoaded", function(event) {
+        new Fingerprint2().get(function (result) {
+            document.querySelector('#hash').value = result
+        })
+    });
+</script>
